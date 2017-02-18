@@ -3,15 +3,17 @@ import smbus
 import math
 import time # Power management registers
 import RPi.GPIO as GPIO
+import socket
 
 power_mgmt_1 = 0x6b
 power_mgmt_2 = 0x6c
 LED_PIN = 18
-ACCEL_PIN = 19
+BUTTON = 19
+PUSHUP_X = 20
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
-GPIO.setup(ACCEL_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.setup(BUTTON, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 GPIO.setup(LED_PIN,GPIO.OUT)
 
 bus = smbus.SMBus(1)# or bus = smbus.SMBus(1) for Revision 2 boards
@@ -87,7 +89,7 @@ def logData():
     raw = open("raw_data.txt", "w")
     state = 0
     while True:
-        input_state = GPIO.input(ACCEL_PIN)
+        input_state = GPIO.input(BUTTON)
         if input_state == False:
             state += 1
             state = state % 2 #flip bit
@@ -99,7 +101,7 @@ def logData():
             time.sleep(0.1)
             raw_data = getRawData()
             log(raw_data, raw)
-            scaled_data = getScaledData()
+            scaled_data = getAverageData()
             log(scaled_data, scaled)
             printData(scaled_data)
             time.sleep(0.5)
@@ -125,16 +127,52 @@ def getAverageData(n=5,sleep=0.05):
 def pushup():
     #avg = getAverageData()
     #print("Average: " + str(avg))
-    x_rot = []
-    did_not_fuck_up = 1
-    while did_not_fuck_up:
+    bool_down = True
+    x_rot = [-90] #Max negative
+    cont = 1
+    while cont:
         GPIO.output(LED_PIN,GPIO.HIGH)
         data = getAverageData()
-        x_rot.append(data[7])
+        x = data[7]
 
+        if bool_down:
+            #going down
+            if x >= x_rot[-1]:
+                x_rot.append(x)
+            else:
+                bool_down = False
+                x_rot.append(x) #peak
+        else:
+            #going up
+            if x < x_rot[-1]:
+                x_rot.append(x)
+            else:
+                cont = False
 
     GPIO.output(LED_PIN,GPIO.LOW)
+    return x_rot[1:] #dont include max neg
 
+def isPushup(data):
+    diff = max(data) - min(data)
+    print("DATA: %s\nDIFF: %s\n\n" % (data, diff))
+    if diff < PUSHUP_X:
+        return False
+
+    return True
+
+def main():
+    s = socket.socket()
+    s.connect(("172.30.0.219",12345))
+    while GPIO.input(BUTTON) == True:
+        time.sleep(0.1)
+    while True:
+        if isPushup(pushup()):
+            s.send("1")
+        else:
+            s.send("0")
+        #input_state = GPIO.input(BUTTON)
+        #if input_state == False:
+        #    print(pushup())
 
 if __name__ == '__main__':
-    pushup()
+    logData()
