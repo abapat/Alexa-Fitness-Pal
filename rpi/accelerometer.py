@@ -10,7 +10,7 @@ power_mgmt_1 = 0x6b
 power_mgmt_2 = 0x6c
 LED_PIN = 18
 BUTTON = 19
-PUSHUP_X = 10
+PUSHUP_X = 20
 PUSHUP_COUNT = 0
 
 GPIO.setmode(GPIO.BCM)
@@ -104,6 +104,7 @@ def printData(tup):
 
 def log(tup, f):
     s = "%s,%s,%s,%s,%s,%s,%s,%s\n" % (str(tup[0]), str(tup[1]), str(tup[2]), str(tup[3]), str(tup[4]), str(tup[5]), str(tup[6]), str(tup[7]))
+    print(s)
     f.write(s)
 
 def logData():
@@ -150,33 +151,41 @@ def pushup():
     #avg = getAverageData()
     #print("Average: " + str(avg))
     bool_down = True
-    x_rot = [-90] #Max negative
+    x_rot = [(0,0,0,0,0,0,0,-90)] #Max negative
     cont = 1
     while cont:
-        GPIO.output(LED_PIN,GPIO.HIGH)
+        #GPIO.output(LED_PIN,GPIO.HIGH)
         data = getAverageData()
         x = data[7]
 
         if bool_down:
             #going down
-            if x >= x_rot[-1]:
-                x_rot.append(x)
+            if x >= x_rot[-1][7]:
+                x_rot.append(data)
             else:
                 bool_down = False
-                x_rot.append(x) #peak
+                x_rot.append(data) #peak
         else:
             #going up
-            if x < x_rot[-1]:
-                x_rot.append(x)
+            if x < x_rot[-1][7]:
+                x_rot.append(data)
             else:
                 cont = False
 
-    GPIO.output(LED_PIN,GPIO.LOW)
+    #GPIO.output(LED_PIN,GPIO.LOW)
     return x_rot[1:] #dont include max neg
 
 def isPushup(data):
-    diff = max(data) - min(data)
-    print("DATA: %s\nDIFF: %s\n\n" % (data, diff))
+    MIN = data[0][7]
+    MAX = data[0][7]
+    for d in data:
+        if d[7] < MIN:
+            MIN = d[7]
+        if d[7] > MAX:
+            MAX = d[7]
+
+    diff = MAX - MIN
+    print("DIFF: %s" % diff)
     if diff < PUSHUP_X:
         return False
 
@@ -203,22 +212,22 @@ def waitForButton():
 def main():
     GPIO.output(LED_PIN, GPIO.LOW)
     arr = []
-    errCount = 5
+    errCount = 3
     f = open("data.csv", "w")
     while True:
         waitForButton()
+        GPIO.output(LED_PIN, GPIO.HIGH)
         while errCount > 0:
-            GPIO.output(LED_PIN, GPIO.HIGH)
             data = pushup()
             if isPushup(data):
-                arr.append(data)
+                arr += data
                 errCount = 5
             else:
                 errCount -= 1
-            time.sleep(.05)
+
         GPIO.output(LED_PIN, GPIO.LOW)
-        print(data)
-        for tup in data:
+        print("Done pushups, Data:\n")
+        for tup in arr:
             log(tup, f)
 
 if __name__ == '__main__':
