@@ -4,21 +4,43 @@ import math
 import time # Power management registers
 import RPi.GPIO as GPIO
 import socket
+import requests
 
 power_mgmt_1 = 0x6b
 power_mgmt_2 = 0x6c
 LED_PIN = 18
 BUTTON = 19
-PUSHUP_X = 20
+PUSHUP_X = 10
+PUSHUP_COUNT = 0
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 GPIO.setup(BUTTON, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 GPIO.setup(LED_PIN,GPIO.OUT)
 
+DEVICE_NAME = "IOT Device 1" #hardcode
+SERVER = "http://hack-it-cewit.herokuapp.com"
+REGISTER_URL = "/api/iot/device"
+DATA_URL = "/api/iot/user"
+
 bus = smbus.SMBus(1)# or bus = smbus.SMBus(1) for Revision 2 boards
 address = 0x68# This is the address value read via the i2cdetect command# Now wake the 6050 up as it starts in sleep mode
 bus.write_byte_data(address, power_mgmt_1, 0)
+
+def registerDevice():
+    data = {'name': DEVICE_NAME, 'is_active': '1'}
+    r = requests.post(SERVER + REGISTER_URL, params=data)
+    if r.status_code != 200:
+        print("Error %d: %s" % (r.status_code, r.reason))
+
+def sendData(excercise, rating, improvements, deviceID):
+    if improvements:
+        data = {'excercise': excercise, 'rating': rating, 'improvements': improvements, 'device_id': deviceID}
+    else:
+        data = {'excercise': excercise, 'rating': rating, 'device_id': deviceID}
+    r = requests.post(SERVER + DATA_URL, params=data)
+    if r.status_code != 200:
+        print("Error %d: %s" % (r.status_code, r.reason))
 
 def read_byte(adr):
     return bus.read_byte_data(address, adr)
@@ -160,7 +182,7 @@ def isPushup(data):
 
     return True
 
-def main():
+def relay():
     s = socket.socket()
     s.connect(("172.30.0.219",12345))
     while GPIO.input(BUTTON) == True:
@@ -174,5 +196,30 @@ def main():
         #if input_state == False:
         #    print(pushup())
 
+def waitForButton():
+    while GPIO.input(BUTTON) == True:
+        time.sleep(0.1)
+
+def main():
+    GPIO.output(LED_PIN, GPIO.LOW)
+    arr = []
+    errCount = 5
+    f = open("data.csv", "w")
+    while True:
+        waitForButton()
+        while errCount > 0:
+            GPIO.output(LED_PIN, GPIO.HIGH)
+            data = pushup()
+            if isPushup(data):
+                arr.append(data)
+                errCount = 5
+            else:
+                errCount -= 1
+            time.sleep(.05)
+        GPIO.output(LED_PIN, GPIO.LOW)
+        print(data)
+        for tup in data:
+            log(tup, f)
+
 if __name__ == '__main__':
-    logData()
+    main()
