@@ -29,7 +29,7 @@ time.sleep(0.1)
 for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
 
     frame = frame.array
-    
+
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
     faces = faceCascade.detectMultiScale(
@@ -74,6 +74,7 @@ for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=
     cv2.setMouseCallback('Video', mClick)
     cv2.imshow('Video', frame)
 
+    rawCapture.truncate(0)
 
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
