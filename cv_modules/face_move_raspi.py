@@ -19,6 +19,7 @@ movement_up = 0
 movement_down = 0
 
 camera = PiCamera()
+camera.rotation = 90
 camera.resolution = (640, 480)
 camera.framerate = 32
 rawCapture = PiRGBArray(camera, size=(640, 480))

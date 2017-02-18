@@ -1,8 +1,8 @@
 import cv2
 import sys
-import scipy
-import sklearn
 import math
+from picamera.array import PiRGBArray
+from picamera import PiCamera
 
 cFlag_ = False
 def mClick(event, x, y, flags, param):
@@ -14,7 +14,10 @@ def mClick(event, x, y, flags, param):
 cascPath = 'haarcascade_frontalface_default.xml'
 faceCascade = cv2.CascadeClassifier(cascPath)
 
-video_capture = cv2.VideoCapture(0)
+camera = PiCamera()
+camera.resolution = (640, 480)
+camera.framerate = 32
+rawCapture = PiRGBArray(camera, size=(640, 480))
 
 accumulator = [0,0]
 movement_up = 0
