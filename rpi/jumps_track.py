@@ -6,6 +6,7 @@ import RPi.GPIO as GPIO
 import socket
 import requests
 import detect_pushup
+import detect_jumps_accel
 
 power_mgmt_1 = 0x6b
 power_mgmt_2 = 0x6c
@@ -109,8 +110,8 @@ def log(tup, f):
     f.write(s)
 
 def logData():
-    scaled = open("scaled_data", "w")
-    raw = open("raw_data.txt", "w")
+    scaled = open("scaled_data.csv", "w")
+    raw = open("raw_data.csv", "w")
     state = 0
     while True:
         input_state = GPIO.input(BUTTON)
@@ -232,6 +233,13 @@ def main():
     #wait for pub to know which workout to do
     waitForButton() #for now...
     logData()
+    all_jump_data = []
+    with open('jump_records.csv', "rb") as ofile:
+        reader = csv.reader(ofile)
+        for row in reader:
+            row = map(float,row)
+            all_jump_data.append(row)
+    detect_jump(all_jump_data)
 
 if __name__ == '__main__':
     main()
