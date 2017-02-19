@@ -126,10 +126,10 @@ def sendData(excercise, rating, improvements):
 
 
 def main():
-    nSquats = detect_squats.get_movements()
-            print(nSquats)
-#     pubnub.add_listener(MySubscribeCallback())
-#     pubnub.subscribe().channels('Channel-3ckelhgj1').execute()
+#     nSquats = detect_squats.get_movements()
+#             print(nSquats)
+    pubnub.add_listener(MySubscribeCallback())
+    pubnub.subscribe().channels('Channel-3ckelhgj1').execute()
 
 
 if __name__ == '__main__':
