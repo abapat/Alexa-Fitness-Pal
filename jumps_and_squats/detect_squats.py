@@ -47,9 +47,9 @@ def get_movements():
             #             cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
             if len(faces) > 1:
                 frnd_cnt += 1
-                if(frnd_cnt > 5):
-                    cv2.putText(frame, "Can you ask your friend to move out ?", (100, 50),
-                                cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
+                # if(frnd_cnt > 5):
+                #     cv2.putText(frame, "Can you ask your friend to move out ?", (100, 50),
+                #                 cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
             else:
                 frnd_cnt -= 1
                 try:
@@ -63,26 +63,26 @@ def get_movements():
                     movement_y = accumulator[1] - new_y
 
                     if(movement_y > 5):
-                        cv2.putText(frame, "You are moving face upwards", (10, 20),
-                                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
+                        # cv2.putText(frame, "You are moving face upwards", (10, 20),
+                        #             cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
                         if(movement_y > 30):
-                            cv2.putText(frame, "Aren't you moving too fast ?", (10, 50),
-                                        cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
+                            # cv2.putText(frame, "Aren't you moving too fast ?", (10, 50),
+                            #             cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
                             if(movement_dir == 0):
                                 numSquats += 0.7
                             movement_dir = 1
                     elif(movement_y < -5):
-                        cv2.putText(frame, "You are moving face downwards", (10, 20),
-                                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
+                        # cv2.putText(frame, "You are moving face downwards", (10, 20),
+                        #             cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
                         if (movement_y < -30):
-                            cv2.putText(frame, "Aren't you moving too fast ?", (10, 50),
-                                        cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
+                            # cv2.putText(frame, "Aren't you moving too fast ?", (10, 50),
+                            #             cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
                             if (movement_dir == 1):
                                 numSquats += 0.7
                             movement_dir = 0
                     else:
-                        cv2.putText(frame, "You are stable", (10, 20),
-                                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
+                        # cv2.putText(frame, "You are stable", (10, 20),
+                        #             cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
 
                     # movement = math.sqrt(math.pow(movement_x,2) + math.pow(movement_y,2))
 
@@ -90,8 +90,8 @@ def get_movements():
                 except:
                     pass
 
-        cv2.namedWindow('Video')
-        cv2.imshow('Video', frame)
+        # cv2.namedWindow('Video')
+        # cv2.imshow('Video', frame)
 
         if time.time() > t_end:
             break
