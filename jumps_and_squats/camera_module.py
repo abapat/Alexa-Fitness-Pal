@@ -117,11 +117,12 @@ def registerDevice():
         print("Error %d: %s" % (r.status_code, r.reason))
 
 def sendData(excercise, rating, improvements):
+    headers = {"Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"}
     if improvements:
         payload = {'excercise': excercise, 'rating': rating, 'improvements': improvements, 'device_id': DEVICE_ID}
     else:
         payload = {'excercise': excercise, 'rating': rating, 'device_id': DEVICE_ID}
-    r = requests.post(SERVER + DATA_URL, data=payload)
+    r = requests.post(SERVER + DATA_URL, json=payload, headers =headers)
     if r.status_code != 200:
         print("Error %d: %s" % (r.status_code, r.reason))
 
