@@ -25,7 +25,7 @@ def get_movements():
     accumulator = [0,0]
     movement_dir = 0
 
-    t_end = time.time() + 30
+    t_end = time.time() + 5
 
     for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
 
@@ -97,9 +97,9 @@ def get_movements():
 
         # cv2.namedWindow('Video')
         # cv2.imshow('Video', frame)
-
+        rawCapture.truncate(0)
         if time.time() > t_end or ustop > 10:
             break
-
-    cv2.destroyAllWindows()
+    camera.close()
+#     cv2.destroyAllWindows()
     return numJumps
