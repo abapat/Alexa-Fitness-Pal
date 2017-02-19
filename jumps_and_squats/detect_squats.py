@@ -3,7 +3,33 @@ import math
 import time
 from picamera.array import PiRGBArray
 from picamera import PiCamera
+import smbus
+import RPi.GPIO as GPIO
+import socket
+import requests
 
+
+DEVICE_ID = 2
+DEVICE_NAME = "IOT Device 2" #hardcode
+SERVER = "http://hack-it-cewit.herokuapp.com"
+REGISTER_URL = "/api/iot/device"
+DATA_URL = "/api/iot/user"
+IP = "104.236.238.240"
+
+def registerDevice():
+    data = {'user_id': DEVICE_NAME, 'device_id': DEVICE_ID, 'is_active': 1}
+    r = requests.post(SERVER + REGISTER_URL, params=data)
+    if r.status_code != 200:
+        print("Error %d: %s" % (r.status_code, r.reason))
+
+def sendData(excercise, rating, improvements):
+    if improvements:
+        data = {'excercise': excercise, 'rating': rating, 'improvements': improvements, 'device_id': DEVICE_ID}
+    else:
+        data = {'excercise': excercise, 'rating': rating, 'device_id': deviceID}
+    r = requests.post(SERVER + DATA_URL, params=data)
+    if r.status_code != 200:
+        print("Error %d: %s" % (r.status_code, r.reason))
 
 
 def get_movements(maxj):
