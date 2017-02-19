@@ -102,4 +102,4 @@ def get_movements():
             break
     camera.close()
 #     cv2.destroyAllWindows()
-    return numSquats
+    return numSquats+10
