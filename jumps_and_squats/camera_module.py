@@ -130,7 +130,7 @@ def sendData(excercise, rating, improvements):
     print "sendData", str(excercise), str(rating), str(improvements)
     headers = {'Content-type': 'application/json'}
     if improvements:
-        payload = {'exercise': excercise, 'rating': rating, 'improvements': improvements, 'device_id': DEVICE_ID}
+        payload = {'exercise': excercise, 'rating': rating, 'improvements': str(improvements), 'device_id': DEVICE_ID}
     else:
         payload = {'exercise': excercise, 'rating': rating, 'device_id': DEVICE_ID}
     print "Sending to ", str(SERVER + DATA_URL)
