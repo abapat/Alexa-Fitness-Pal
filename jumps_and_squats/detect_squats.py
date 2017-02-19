@@ -56,7 +56,7 @@ def get_movements():
                 frnd_cnt -= 1
                 try:
                     (x, y, w, h) = faces[0]
-                    cv2.rectangle(frame, (x, y), (x+w, y+h), (255, 225, 225), 2)
+                    # cv2.rectangle(frame, (x, y), (x+w, y+h), (255, 225, 225), 2)
 
                     # new_x = (x+w)/2
                     new_y = (y+w)/2
