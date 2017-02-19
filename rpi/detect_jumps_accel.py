@@ -29,9 +29,9 @@ def detect_jump(raw_data):
     # -ve +ve | -ve STOP !
     for jump in jump_sequence:
         current_gyro_z = jump.gyro_z
-        if(current_gyro_z < 0 and last_gyro_z > 0):
+        if((current_gyro_z < 0 and last_gyro_z > 0) or (current_gyro_z > 0 and last_gyro_z < 0)):
             numJumps += 1
         last_gyro_z = current_gyro_z
 
-    numJumps = numJumps*4
+    numJumps = numJumps*2
     print "You jumped", numJumps, "times"
