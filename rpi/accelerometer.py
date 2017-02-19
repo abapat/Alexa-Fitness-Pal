@@ -113,7 +113,7 @@ def registerDevice():
 def sendData(excercise, rating, improvements):
     #headers = {"Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"}
     headers = {'Content-type': 'application/json'}
-    if improvements:
+    if improvements is not None:
         payload = {'exercise': excercise, 'rating': rating, 'improvements': improvements, 'device_id': DEVICE_ID}
     else:
         payload = {'exercise': excercise, 'rating': rating, 'device_id': DEVICE_ID}
