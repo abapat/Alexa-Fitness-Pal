@@ -100,6 +100,6 @@ def get_movements():
         rawCapture.truncate(0)
         if time.time() > t_end or ustop > 10:
             break
-
-    cv2.destroyAllWindows()
+    camera.close()
+#     cv2.destroyAllWindows()
     return numSquats
