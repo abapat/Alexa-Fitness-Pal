@@ -241,7 +241,7 @@ def main():
         for row in reader:
             row = map(float,row)
             all_jump_data.append(row)
-    detect_jump(all_jump_data)
+    detect_jumps_accel.detect_jump(all_jump_data)
 
 if __name__ == '__main__':
     main()
