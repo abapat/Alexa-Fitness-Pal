@@ -1,3 +1,4 @@
+import math
 jump_cycle = []
 
 jump_data = []
@@ -29,7 +30,7 @@ def detect_jump(raw_data):
     for jump in jump_sequence:
         current_gyro_z = jump.gyro_z
         if(current_gyro_z < 0 and last_gyro_z > 0):
-            if (current_gyro_z + last_gyro_z > 300):
+            if (math.abs(current_gyro_z + last_gyro_z) > 300):
                 numJumps += 1
             else:
                 print "Your jumps aren't perfect. Are you jumping really ?"
