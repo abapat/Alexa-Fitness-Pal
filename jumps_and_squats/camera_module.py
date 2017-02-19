@@ -118,10 +118,10 @@ def registerDevice():
 
 def sendData(excercise, rating, improvements):
     if improvements:
-        data = {'excercise': excercise, 'rating': rating, 'improvements': improvements, 'device_id': DEVICE_ID}
+        payload = {'excercise': excercise, 'rating': rating, 'improvements': improvements, 'device_id': DEVICE_ID}
     else:
-        data = {'excercise': excercise, 'rating': rating, 'device_id': DEVICE_ID}
-    r = requests.post(SERVER + DATA_URL, data=data)
+        payload = {'excercise': excercise, 'rating': rating, 'device_id': DEVICE_ID}
+    r = requests.post(SERVER + DATA_URL, data=payload)
     if r.status_code != 200:
         print("Error %d: %s" % (r.status_code, r.reason))
 
