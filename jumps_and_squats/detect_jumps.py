@@ -102,4 +102,4 @@ def get_movements():
             break
 
     cv2.destroyAllWindows()
-    return numSquats
+    return numJumps
