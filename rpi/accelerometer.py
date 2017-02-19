@@ -13,6 +13,7 @@ LED_PIN = 18
 BUTTON = 19
 PUSHUP_X = 20
 PUSHUP_COUNT = 0
+PORT = 5800
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
@@ -23,6 +24,7 @@ DEVICE_NAME = "IOT Device 1" #hardcode
 SERVER = "http://hack-it-cewit.herokuapp.com"
 REGISTER_URL = "/api/iot/device"
 DATA_URL = "/api/iot/user"
+IP = "104.236.238.240"
 
 bus = smbus.SMBus(1)# or bus = smbus.SMBus(1) for Revision 2 boards
 address = 0x68# This is the address value read via the i2cdetect command# Now wake the 6050 up as it starts in sleep mode
@@ -226,12 +228,19 @@ def analyzePushups():
             errCount -= 1
 
     GPIO.output(LED_PIN, GPIO.LOW)
-    detect_pushup.detect_pushup(arr)
+    return detect_pushup.detect_pushup(arr)
 
 def main():
+    sock = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+    sock.connect((IP,PORT))
     #wait for pub to know which workout to do
-    waitForButton() #for now...
-    analyzePushups()
+    waitForButton()
+    while True:
+        bit = sock.recv(1)
+        if bit == "1":
+            res = analyzePushups()
+            print(res)
+
 
 if __name__ == '__main__':
     main()

@@ -200,7 +200,8 @@ def detect_pushup(raw_data):
 
 
     values_y_pred = pushup_classifier.predict(features_x)
-    print values_y_pred
+    return values_y_pred
+    #print values_y_pred
 
 
 #detect_pushup([-79.2,43,-11,0.300537109,-0.912011719,0.324414063,-63.59571974,-17.18104263])
