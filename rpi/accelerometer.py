@@ -9,7 +9,7 @@ import socket
 import requests
 import detect_pushup
 import logging
-
+import json
 from pubnub.callbacks import SubscribeCallback
 from pubnub.enums import PNStatusCategory
 from pubnub.pnconfiguration import PNConfiguration
@@ -19,6 +19,7 @@ logging.basicConfig()
 pnconfig = PNConfiguration()
 
 pnconfig.subscribe_key = "sub-c-889dd4f6-f67a-11e6-bb94-0619f8945a4f"
+pnconfig.publish_key = "pub-c-ffbcc603-c1c8-4168-a8c0-4c060d6ee36a"
 pubnub = PubNub(pnconfig)
 
 power_mgmt_1 = 0x6b
@@ -57,6 +58,7 @@ def my_publish_callback(envelope, status):
     if not status.is_error():
         pass  # Message successfully published to specified channel.
     else:
+        print("Error: some error occured when publishing message")
         pass  # Handle message publish error. Check 'category' property to find out possible issue
         # because of which request did fail.
         # Request can be resent using: [status retry];
@@ -70,10 +72,11 @@ class MySubscribeCallback(SubscribeCallback):
             pass  # This event happens when radio / connectivity is lost
 
         elif status.category == PNStatusCategory.PNConnectedCategory:
+            pass
             # Connect event. You can do stuff like publish, and know you'll get it.
             # Or just use the connected event to confirm you are subscribed for
             # UI / internal notifications, etc
-            pubnub.publish().channel("Channel-3ckelhgj1").message("hello!!").async(my_publish_callback)
+
         elif status.category == PNStatusCategory.PNReconnectedCategory:
             pass
             # Happens as part of our regular operation. This event happens when
@@ -92,6 +95,7 @@ class MySubscribeCallback(SubscribeCallback):
             print(res)
             if res:
                 sendData("push ups", getRating(res), str(len(res)))
+                pubnub.publish().channel("Channel-3ckelhgj1").message("done").async(my_publish_callback)
         elif workout == "squats":
             print("squats")
         else:
@@ -105,10 +109,10 @@ def registerDevice():
 
 def sendData(excercise, rating, improvements):
     if improvements:
-        data = {'excercise': excercise, 'rating': rating, 'improvements': improvements, 'device_id': DEVICE_ID}
+        payload = {'exercise': excercise, 'rating': rating, 'improvements': improvements, 'device_id': DEVICE_ID}
     else:
-        data = {'excercise': excercise, 'rating': rating, 'device_id': DEVICE_ID}
-    r = requests.post(SERVER + DATA_URL, params=data)
+        payload = {'exercise': excercise, 'rating': rating, 'device_id': DEVICE_ID}
+    r = requests.post(SERVER + DATA_URL, data=json.dumps(payload))
     if r.status_code != 200:
         print("Error %d: %s" % (r.status_code, r.reason))
 
@@ -358,8 +362,10 @@ def getRating(res):
 def main():
     setupLed()
 
-    pubnub.add_listener(MySubscribeCallback())
-    pubnub.subscribe().channels('Channel-3ckelhgj1').execute()
+    sendData("squats", 0.89, "5")
+
+    #pubnub.add_listener(MySubscribeCallback())
+    #pubnub.subscribe().channels('Channel-3ckelhgj1').execute()
 
 if __name__ == '__main__':
     main()
