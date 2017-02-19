@@ -97,7 +97,7 @@ def get_movements():
 
         # cv2.namedWindow('Video')
         # cv2.imshow('Video', frame)
-
+        rawCapture.truncate(0)
         if time.time() > t_end or ustop > 10:
             break
 
