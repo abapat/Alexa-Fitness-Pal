@@ -1,11 +1,25 @@
 #!/usr/bin/python
+
 import smbus
 import math
 import time # Power management registers
+
 import RPi.GPIO as GPIO
 import socket
 import requests
 import detect_pushup
+import logging
+
+from pubnub.callbacks import SubscribeCallback
+from pubnub.enums import PNStatusCategory
+from pubnub.pnconfiguration import PNConfiguration
+from pubnub.pubnub import PubNub
+
+logging.basicConfig()
+pnconfig = PNConfiguration()
+
+pnconfig.subscribe_key = "sub-c-889dd4f6-f67a-11e6-bb94-0619f8945a4f"
+pubnub = PubNub(pnconfig)
 
 power_mgmt_1 = 0x6b
 power_mgmt_2 = 0x6c
@@ -28,7 +42,7 @@ GPIO.setup(GREEN, GPIO.OUT)
 GPIO.setup(BLUE ,GPIO.OUT)
 
 DEVICE_ID = 1
-DEVICE_NAME = "IOT Device 1" #hardcode
+DEVICE_NAME = "IOT DEVICE 1" #hardcode
 SERVER = "http://hack-it-cewit.herokuapp.com"
 REGISTER_URL = "/api/iot/device"
 DATA_URL = "/api/iot/user"
@@ -37,6 +51,51 @@ IP = "104.236.238.240"
 bus = smbus.SMBus(1)# or bus = smbus.SMBus(1) for Revision 2 boards
 address = 0x68# This is the address value read via the i2cdetect command# Now wake the 6050 up as it starts in sleep mode
 bus.write_byte_data(address, power_mgmt_1, 0)
+
+def my_publish_callback(envelope, status):
+    # Check whether request successfully completed or not
+    if not status.is_error():
+        pass  # Message successfully published to specified channel.
+    else:
+        pass  # Handle message publish error. Check 'category' property to find out possible issue
+        # because of which request did fail.
+        # Request can be resent using: [status retry];
+
+class MySubscribeCallback(SubscribeCallback):
+    def presence(self, pubnub, presence):
+        pass  # handle incoming presence data
+
+    def status(self, pubnub, status):
+        if status.category == PNStatusCategory.PNUnexpectedDisconnectCategory:
+            pass  # This event happens when radio / connectivity is lost
+
+        elif status.category == PNStatusCategory.PNConnectedCategory:
+            # Connect event. You can do stuff like publish, and know you'll get it.
+            # Or just use the connected event to confirm you are subscribed for
+            # UI / internal notifications, etc
+            pubnub.publish().channel("Channel-3ckelhgj1").message("hello!!").async(my_publish_callback)
+        elif status.category == PNStatusCategory.PNReconnectedCategory:
+            pass
+            # Happens as part of our regular operation. This event happens when
+            # radio / connectivity is lost, then regained.
+        elif status.category == PNStatusCategory.PNDecryptionErrorCategory:
+            pass
+            # Handle message decryption error. Probably client configured to
+            # encrypt messages and on live data feed it received plain text.
+
+    def message(self, pubnub, message):
+        workout = message.message['text']
+        if workout == "push ups":
+            color("orange")
+            waitForButton()
+            res = analyzePushups()
+            print(res)
+            if res:
+                sendData("push ups", getRating(res), str(len(res)))
+        elif workout == "squats":
+            print("squats")
+        else:
+            print("jumping jacks")
 
 def registerDevice():
     data = {'user_id': DEVICE_NAME, 'device_id': DEVICE_ID, 'is_active': 1}
@@ -48,10 +107,15 @@ def sendData(excercise, rating, improvements):
     if improvements:
         data = {'excercise': excercise, 'rating': rating, 'improvements': improvements, 'device_id': DEVICE_ID}
     else:
-        data = {'excercise': excercise, 'rating': rating, 'device_id': deviceID}
+        data = {'excercise': excercise, 'rating': rating, 'device_id': DEVICE_ID}
     r = requests.post(SERVER + DATA_URL, params=data)
     if r.status_code != 200:
         print("Error %d: %s" % (r.status_code, r.reason))
+
+def getKey():
+    with open("keys", "r") as f:
+        key = f.read()
+    return key
 
 def setupLed():
     global RED
@@ -226,8 +290,14 @@ def isPushup(data):
 
     diff = MAX - MIN
     print("DIFF: %s" % diff)
+
     if diff < PUSHUP_X:
+        color("red")
         return False
+    elif diff > PUSHUP_X and diff < PUSHUP_X + 10:
+        color("yellow")
+    else:
+        color("green")
 
     return True
 
@@ -252,8 +322,6 @@ def waitForButton():
 def analyzePushups():
     color("off")
     arr = []
-    #f = open("data.csv", "w")
-    waitForButton()
     errCount = 3
     color("blue")
     while errCount > 0:
@@ -265,6 +333,8 @@ def analyzePushups():
             errCount -= 1
 
     color("off")
+    if len(arr) < 5:
+        return None
     return detect_pushup.detect_pushup(arr)
 
 def colorTest():
@@ -275,18 +345,21 @@ def colorTest():
                     c((x*i),(y*i),(z*i))
                     time.sleep(0.02)
 
+def getRating(res):
+    avg = 0.0
+    for val in res:
+        avg += val
+    avg = avg / float(len(res))
+
+    if avg > 1:
+        return 1.0
+    return avg
+
 def main():
     setupLed()
-    sock = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-    sock.connect((IP,PORT))
-    #wait for pub to know which workout to do
-    waitForButton()
-    while True:
-        bit = sock.recv(1)
-        if bit == "1":
-            res = analyzePushups()
-            print(res)
 
+    pubnub.add_listener(MySubscribeCallback())
+    pubnub.subscribe().channels('Channel-3ckelhgj1').execute()
 
 if __name__ == '__main__':
     main()
