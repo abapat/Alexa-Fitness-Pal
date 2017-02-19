@@ -7,6 +7,7 @@ import socket
 import requests
 import detect_pushup
 import detect_jumps_accel
+import csv
 
 power_mgmt_1 = 0x6b
 power_mgmt_2 = 0x6c
