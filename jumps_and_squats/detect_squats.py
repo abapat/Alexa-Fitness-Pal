@@ -25,7 +25,7 @@ def get_movements():
     accumulator = [0,0]
     movement_dir = 0
 
-    t_end = time.time() + 30
+    t_end = time.time() + 10
 
     for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
 
@@ -56,7 +56,7 @@ def get_movements():
                 frnd_cnt -= 1
                 try:
                     (x, y, w, h) = faces[0]
-                    cv2.rectangle(frame, (x, y), (x+w, y+h), (255, 225, 225), 2)
+                    # cv2.rectangle(frame, (x, y), (x+w, y+h), (255, 225, 225), 2)
 
                     # new_x = (x+w)/2
                     new_y = (y+w)/2
@@ -97,9 +97,9 @@ def get_movements():
 
         # cv2.namedWindow('Video')
         # cv2.imshow('Video', frame)
-
+        rawCapture.truncate(0)
         if time.time() > t_end or ustop > 10:
             break
-
-    cv2.destroyAllWindows()
-    return numSquats
+    camera.close()
+#     cv2.destroyAllWindows()
+    return numSquats+10
