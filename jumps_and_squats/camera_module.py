@@ -63,7 +63,7 @@ class MySubscribeCallback(SubscribeCallback):
             # Connect event. You can do stuff like publish, and know you'll get it.
             # Or just use the connected event to confirm you are subscribed for
             # UI / internal notifications, etc
-            pubnub.publish().channel("awesomeChannel").message("hello!!").async(my_publish_callback)
+            pubnub.publish().channel("Channel-3ckelhgj1").message("hello!!").async(my_publish_callback)
         elif status.category == PNStatusCategory.PNReconnectedCategory:
             pass
             # Happens as part of our regular operation. This event happens when
@@ -77,14 +77,26 @@ class MySubscribeCallback(SubscribeCallback):
         workout = message.message['text']
         if workout == "squats":
             # waitForButton()
-            res = detect_squats.get_movements()
-            print(res)
+            nSquats = detect_squats.get_movements()
+            print(nSquats)
+            if nSquats:
+                sendData("squats", getRating(nSquats), nSquats)
         elif workout == "jumping jacks":
             # waitForButton()
-            res = detect_squats.get_movements()
-            print(res)
+            nJumps = detect_jumps.get_movements()
+            print(nJumps)
+            if nJumps:
+                sendData("jumping jacks", getRating(nJumps), nJumps)
         else:
             print "push ups"
+
+
+def getRating(num):
+    if num > 10:
+        return 0.7
+    else:
+        return 0.4
+
 
 
 def read_byte(adr):
@@ -117,15 +129,8 @@ def waitForButton():
         time.sleep(0.1)
 
 def main():
-    sock = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-    sock.connect((IP,PORT))
-    #wait for pub to know which workout to do
-    waitForButton()
-    while True:
-        bit = sock.recv(1)
-        if bit == "1":
-            res = detect_squats.get_movements()
-            print(res)
+    pubnub.add_listener(MySubscribeCallback())
+    pubnub.subscribe().channels('Channel-3ckelhgj1').execute()
 
 
 if __name__ == '__main__':
