@@ -44,7 +44,7 @@ GPIO.setup(BLUE ,GPIO.OUT)
 
 DEVICE_ID = 1
 DEVICE_NAME = "IOT DEVICE 1" #hardcode
-SERVER = "http://hack-it-cewit.herokuapp.com"
+SERVER = "https://hack-it-cewit.herokuapp.com"
 REGISTER_URL = "/api/iot/device"
 DATA_URL = "/api/iot/user"
 IP = "104.236.238.240"
@@ -103,16 +103,18 @@ class MySubscribeCallback(SubscribeCallback):
 
 def registerDevice():
     data = {'user_id': DEVICE_NAME, 'device_id': DEVICE_ID, 'is_active': 1}
-    r = requests.post(SERVER + REGISTER_URL, params=data)
+    headers = {"Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"}
+    r = requests.post(SERVER + REGISTER_URL, json=data, headers=headers)
     if r.status_code != 200:
         print("Error %d: %s" % (r.status_code, r.reason))
 
 def sendData(excercise, rating, improvements):
+    headers = {"Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"}
     if improvements:
         payload = {'exercise': excercise, 'rating': rating, 'improvements': improvements, 'device_id': DEVICE_ID}
     else:
         payload = {'exercise': excercise, 'rating': rating, 'device_id': DEVICE_ID}
-    r = requests.post(SERVER + DATA_URL, data=json.dumps(payload))
+    r = requests.post(SERVER + DATA_URL, json=payload,headers=headers )
     if r.status_code != 200:
         print("Error %d: %s" % (r.status_code, r.reason))
 
