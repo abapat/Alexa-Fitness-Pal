@@ -36,5 +36,5 @@ def detect_jump(raw_data):
                 print "Your jumps aren't perfect. Are you jumping really ?"
         last_gyro_z = current_gyro_z
 
-
+    numJumps = numJumps*2
     print "You jumped", numJumps, "times"
