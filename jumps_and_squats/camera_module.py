@@ -27,7 +27,7 @@ pubnub = PubNub(pnconfig)
 
 DEVICE_ID = 2
 DEVICE_NAME = "IOT Device 2" #hardcode
-SERVER = "http://hack-it-cewit.herokuapp.com"
+SERVER = "https://hack-it-cewit.herokuapp.com"
 REGISTER_URL = "/api/iot/device"
 DATA_URL = "/api/iot/user"
 IP = "104.236.238.240"
@@ -117,12 +117,13 @@ def registerDevice():
         print("Error %d: %s" % (r.status_code, r.reason))
 
 def sendData(excercise, rating, improvements):
-    headers = {"Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"}
+    headers = {'Content-type': 'application/json'}
     if improvements:
         payload = {'excercise': excercise, 'rating': rating, 'improvements': improvements, 'device_id': DEVICE_ID}
     else:
         payload = {'excercise': excercise, 'rating': rating, 'device_id': DEVICE_ID}
-    r = requests.post(SERVER + DATA_URL, json=payload, headers =headers)
+    print("Sending to %s" % (SERVER + DATA_URL))
+    r = requests.post(SERVER + DATA_URL, json=payload, headers=headers, allow_redirects=True)
     if r.status_code != 200:
         print("Error %d: %s" % (r.status_code, r.reason))
 
