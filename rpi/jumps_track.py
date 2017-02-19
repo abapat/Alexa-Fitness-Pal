@@ -133,6 +133,7 @@ def logData():
             state = 1
         else:
             GPIO.output(LED_PIN,GPIO.LOW)
+            return
 
 def getAverageData(n=5,sleep=0.05):
     arr = []
@@ -234,7 +235,7 @@ def main():
     waitForButton() #for now...
     logData()
     all_jump_data = []
-    with open('jump_records.csv', "rb") as ofile:
+    with open('raw_data.csv', "rb") as ofile:
         reader = csv.reader(ofile)
         for row in reader:
             row = map(float,row)
