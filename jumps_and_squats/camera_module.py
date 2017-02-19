@@ -6,6 +6,7 @@ from picamera import PiCamera
 import smbus
 # import RPi.GPIO as GPIO
 # import socket
+import logging
 import requests
 
 from pubnub.callbacks import SubscribeCallback
@@ -39,7 +40,7 @@ power_mgmt_2 = 0x6c
 # bus = smbus.SMBus(1)# or bus = smbus.SMBus(1) for Revision 2 boards
 # address = 0x68# This is the address value read via the i2cdetect command# Now wake the 6050 up as it starts in sleep mode
 # bus.write_byte_data(address, power_mgmt_1, 0)
-
+logging.basicConfig()
 
 def my_publish_callback(envelope, status):
     # Check whether request successfully completed or not
