@@ -4,8 +4,8 @@ import time
 from picamera.array import PiRGBArray
 from picamera import PiCamera
 import smbus
-import RPi.GPIO as GPIO
-import socket
+# import RPi.GPIO as GPIO
+# import socket
 import requests
 
 from pubnub.callbacks import SubscribeCallback
@@ -124,9 +124,6 @@ def sendData(excercise, rating, improvements):
         print("Error %d: %s" % (r.status_code, r.reason))
 
 
-def waitForButton():
-    while GPIO.input(BUTTON) == True:
-        time.sleep(0.1)
 
 def main():
     pubnub.add_listener(MySubscribeCallback())
