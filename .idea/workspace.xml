@@ -2,9 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d3217a75-0a8f-4933-a944-12b9ceb928ae" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/jumps_and_squats/camera_module.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/jumps_and_squats/detect_jumps.py" afterPath="$PROJECT_DIR$/jumps_and_squats/detect_jumps.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/jumps_and_squats/detect_squats.py" afterPath="$PROJECT_DIR$/jumps_and_squats/detect_squats.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/jumps_and_squats/camera_module.py" afterPath="$PROJECT_DIR$/jumps_and_squats/camera_module.py" />
     </list>
     <ignored path="Alexa-Fitness-Pal.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -28,7 +26,7 @@
         <entry file="file://$PROJECT_DIR$/jumps_and_squats/camera_module.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="560">
-              <caret line="67" column="33" selection-start-line="67" selection-start-column="33" selection-end-line="67" selection-end-column="33" />
+              <caret line="67" column="45" selection-start-line="67" selection-start-column="45" selection-end-line="67" selection-end-column="45" />
               <folding>
                 <element signature="e#0#10#0" expanded="true" />
               </folding>
@@ -39,7 +37,7 @@
       <file leaf-file-name="detect_jumps.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/jumps_and_squats/detect_jumps.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="105">
+            <state relative-caret-position="-760">
               <caret line="7" column="18" selection-start-line="7" selection-start-column="18" selection-end-line="7" selection-end-column="18" />
               <folding>
                 <element signature="e#0#10#0" expanded="true" />
@@ -51,8 +49,8 @@
       <file leaf-file-name="detect_squats.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/jumps_and_squats/detect_squats.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-760">
-              <caret line="7" column="18" selection-start-line="7" selection-start-column="18" selection-end-line="7" selection-end-column="18" />
+            <state relative-caret-position="105">
+              <caret line="7" column="17" selection-start-line="7" selection-start-column="4" selection-end-line="7" selection-end-column="17" />
               <folding>
                 <element signature="e#0#10#0" expanded="true" />
               </folding>
@@ -88,9 +86,9 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/rpi/accelerometer.py" />
-        <option value="$PROJECT_DIR$/jumps_and_squats/camera_module.py" />
         <option value="$PROJECT_DIR$/jumps_and_squats/detect_squats.py" />
         <option value="$PROJECT_DIR$/jumps_and_squats/detect_jumps.py" />
+        <option value="$PROJECT_DIR$/jumps_and_squats/camera_module.py" />
       </list>
     </option>
   </component>
@@ -379,7 +377,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/jumps_and_squats/detect_squats.py">
+    <entry file="file://$PROJECT_DIR$/jumps_and_squats/detect_jumps.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-760">
           <caret line="7" column="18" selection-start-line="7" selection-start-column="18" selection-end-line="7" selection-end-column="18" />
@@ -389,10 +387,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/jumps_and_squats/detect_jumps.py">
+    <entry file="file://$PROJECT_DIR$/jumps_and_squats/detect_squats.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="105">
-          <caret line="7" column="18" selection-start-line="7" selection-start-column="18" selection-end-line="7" selection-end-column="18" />
+          <caret line="7" column="17" selection-start-line="7" selection-start-column="4" selection-end-line="7" selection-end-column="17" />
           <folding>
             <element signature="e#0#10#0" expanded="true" />
           </folding>
@@ -402,7 +400,7 @@
     <entry file="file://$PROJECT_DIR$/jumps_and_squats/camera_module.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="560">
-          <caret line="67" column="33" selection-start-line="67" selection-start-column="33" selection-end-line="67" selection-end-column="33" />
+          <caret line="67" column="45" selection-start-line="67" selection-start-column="45" selection-end-line="67" selection-end-column="45" />
           <folding>
             <element signature="e#0#10#0" expanded="true" />
           </folding>

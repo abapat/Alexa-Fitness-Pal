@@ -65,7 +65,7 @@ def main():
     while True:
         bit = sock.recv(1)
         if bit == "1":
-            res = detect_squats()
+            res = detect_squats.get_movements()
             print(res)
 
 
