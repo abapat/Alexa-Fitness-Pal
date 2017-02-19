@@ -81,16 +81,22 @@ class MySubscribeCallback(SubscribeCallback):
             # waitForButton()
             nSquats = detect_squats.get_movements()
             print(nSquats)
-            if nSquats:
+            try:
                 sendData("squats", getRating(nSquats), nSquats)
                 pubnub.publish().channel("Channel-3ckelhgj1").message("done").async(my_publish_callback)
+            else:
+                print "Failed to send message"
+                pass
         elif workout == "jumping jacks":
             # waitForButton()
             nJumps = detect_jumps.get_movements()
             print(nJumps)
-            if nJumps:
+            try:
                 sendData("jumping jacks", getRating(nJumps), nJumps)
                 pubnub.publish().channel("Channel-3ckelhgj1").message("done").async(my_publish_callback)
+            except:
+                print "Failed to send message"
+                pass
         else:
             print "push ups"
 
