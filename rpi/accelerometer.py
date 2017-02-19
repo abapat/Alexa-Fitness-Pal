@@ -9,17 +9,25 @@ import detect_pushup
 
 power_mgmt_1 = 0x6b
 power_mgmt_2 = 0x6c
-LED_PIN = 18
 BUTTON = 19
 PUSHUP_X = 20
 PUSHUP_COUNT = 0
 PORT = 5800
 
+RED = 17
+GREEN = 18
+BLUE = 27
+FREQ = 100 #pwm
+COLORS = {'off':[0,0,0], 'red':[100,0,0], 'blue':[0,0,100], 'green':[0,50,0], 'yellow':[100,100,0], 'purple':[50,0,50]}
+
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 GPIO.setup(BUTTON, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-GPIO.setup(LED_PIN,GPIO.OUT)
+GPIO.setup(RED, GPIO.OUT)
+GPIO.setup(GREEN, GPIO.OUT)
+GPIO.setup(BLUE ,GPIO.OUT)
 
+DEVICE_ID = 1
 DEVICE_NAME = "IOT Device 1" #hardcode
 SERVER = "http://hack-it-cewit.herokuapp.com"
 REGISTER_URL = "/api/iot/device"
@@ -31,19 +39,50 @@ address = 0x68# This is the address value read via the i2cdetect command# Now wa
 bus.write_byte_data(address, power_mgmt_1, 0)
 
 def registerDevice():
-    data = {'name': DEVICE_NAME, 'is_active': '1'}
+    data = {'user_id': DEVICE_NAME, 'device_id': DEVICE_ID, 'is_active': 1}
     r = requests.post(SERVER + REGISTER_URL, params=data)
     if r.status_code != 200:
         print("Error %d: %s" % (r.status_code, r.reason))
 
-def sendData(excercise, rating, improvements, deviceID):
+def sendData(excercise, rating, improvements):
     if improvements:
-        data = {'excercise': excercise, 'rating': rating, 'improvements': improvements, 'device_id': deviceID}
+        data = {'excercise': excercise, 'rating': rating, 'improvements': improvements, 'device_id': DEVICE_ID}
     else:
         data = {'excercise': excercise, 'rating': rating, 'device_id': deviceID}
     r = requests.post(SERVER + DATA_URL, params=data)
     if r.status_code != 200:
         print("Error %d: %s" % (r.status_code, r.reason))
+
+def setupLed():
+    global RED
+    global GREEN
+    global BLUE
+    RED = GPIO.PWM(RED, FREQ)
+    RED.start(0)
+    GREEN = GPIO.PWM(GREEN, FREQ)
+    GREEN.start(0)
+    BLUE = GPIO.PWM(BLUE, FREQ)
+    BLUE.start(0)
+
+def c(r,g,b):
+    global RED
+    global GREEN
+    global BLUE
+    RED.ChangeDutyCycle(r)
+    GREEN.ChangeDutyCycle(g)
+    BLUE.ChangeDutyCycle(b)
+
+def color(c):
+    global RED
+    global GREEN
+    global BLUE
+    tup = [100, 100, 100]
+    if c in COLORS:
+        tup = COLORS[c]
+
+    RED.ChangeDutyCycle(tup[0])
+    GREEN.ChangeDutyCycle(tup[1])
+    BLUE.ChangeDutyCycle(tup[2])
 
 def read_byte(adr):
     return bus.read_byte_data(address, adr)
@@ -123,7 +162,7 @@ def logData():
             time.sleep(0.2)
 
         if state == 1:
-            GPIO.output(LED_PIN,GPIO.HIGH)
+            color("purple")
             time.sleep(0.1)
             raw_data = getRawData()
             log(raw_data, raw)
@@ -133,7 +172,7 @@ def logData():
             time.sleep(0.5)
             state = 1
         else:
-            GPIO.output(LED_PIN,GPIO.LOW)
+            color("off")
 
 def getAverageData(n=5,sleep=0.05):
     arr = []
@@ -157,7 +196,6 @@ def pushup():
     x_rot = [(0,0,0,0,0,0,0,-90)] #Max negative
     cont = 1
     while cont:
-        #GPIO.output(LED_PIN,GPIO.HIGH)
         data = getAverageData()
         x = data[7]
 
@@ -175,7 +213,6 @@ def pushup():
             else:
                 cont = False
 
-    #GPIO.output(LED_PIN,GPIO.LOW)
     return x_rot[1:] #dont include max neg
 
 def isPushup(data):
@@ -213,12 +250,12 @@ def waitForButton():
         time.sleep(0.1)
 
 def analyzePushups():
-    GPIO.output(LED_PIN, GPIO.LOW)
+    color("off")
     arr = []
     #f = open("data.csv", "w")
     waitForButton()
     errCount = 3
-    GPIO.output(LED_PIN, GPIO.HIGH)
+    color("blue")
     while errCount > 0:
         data = pushup()
         if isPushup(data):
@@ -227,10 +264,19 @@ def analyzePushups():
         else:
             errCount -= 1
 
-    GPIO.output(LED_PIN, GPIO.LOW)
+    color("off")
     return detect_pushup.detect_pushup(arr)
 
+def colorTest():
+    for x in range(0,2):
+        for y in range(0,2):
+            for z in range(0,2):
+                for i in range(0,101):
+                    c((x*i),(y*i),(z*i))
+                    time.sleep(0.02)
+
 def main():
+    setupLed()
     sock = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
     sock.connect((IP,PORT))
     #wait for pub to know which workout to do
