@@ -12,6 +12,8 @@ def get_movements():
     numSquats = 0
     frnd_cnt = 0
 
+    ustop = 0
+
     cascPath = 'haarcascade_frontalface_default.xml'
     faceCascade = cv2.CascadeClassifier(cascPath)
 
@@ -66,6 +68,7 @@ def get_movements():
                         # cv2.putText(frame, "You are moving face upwards", (10, 20),
                         #             cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
                         if(movement_y > 30):
+                            ustop = 0
                             # cv2.putText(frame, "Aren't you moving too fast ?", (10, 50),
                             #             cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
                             if(movement_dir == 0):
@@ -75,12 +78,14 @@ def get_movements():
                         # cv2.putText(frame, "You are moving face downwards", (10, 20),
                         #             cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
                         if (movement_y < -30):
+                            ustop = 0
                             # cv2.putText(frame, "Aren't you moving too fast ?", (10, 50),
                             #             cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
                             if (movement_dir == 1):
                                 numSquats += 0.7
                             movement_dir = 0
                     else:
+                        ustop += 1
                         # cv2.putText(frame, "You are stable", (10, 20),
                         #             cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
 
@@ -93,7 +98,7 @@ def get_movements():
         # cv2.namedWindow('Video')
         # cv2.imshow('Video', frame)
 
-        if time.time() > t_end:
+        if time.time() > t_end or ustop > 10:
             break
 
     cv2.destroyAllWindows()
