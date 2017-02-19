@@ -75,6 +75,7 @@ class MySubscribeCallback(SubscribeCallback):
 
     def message(self, pubnub, message):
         workout = message.message['text']
+        print workout
         if workout == "squats":
             # waitForButton()
             nSquats = detect_squats.get_movements()
