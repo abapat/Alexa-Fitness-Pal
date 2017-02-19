@@ -5,6 +5,7 @@ import time # Power management registers
 import RPi.GPIO as GPIO
 import socket
 import requests
+import detect_pushup
 
 power_mgmt_1 = 0x6b
 power_mgmt_2 = 0x6c
@@ -212,23 +213,25 @@ def waitForButton():
 def main():
     GPIO.output(LED_PIN, GPIO.LOW)
     arr = []
-    errCount = 3
     f = open("data.csv", "w")
     while True:
         waitForButton()
+        errCount = 3
         GPIO.output(LED_PIN, GPIO.HIGH)
         while errCount > 0:
             data = pushup()
             if isPushup(data):
                 arr += data
-                errCount = 5
+                errCount = 3
             else:
                 errCount -= 1
 
         GPIO.output(LED_PIN, GPIO.LOW)
-        print("Done pushups, Data:\n")
-        for tup in arr:
-            log(tup, f)
+        detect_pushup.detect_pushup(arr)
+        arr = []
+        #print("Done pushups, Data:\n")
+        #for tup in arr:
+        #    log(tup, f)
 
 if __name__ == '__main__':
     main()
