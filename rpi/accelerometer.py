@@ -210,28 +210,28 @@ def waitForButton():
     while GPIO.input(BUTTON) == True:
         time.sleep(0.1)
 
-def main():
+def analyzePushups():
     GPIO.output(LED_PIN, GPIO.LOW)
     arr = []
-    f = open("data.csv", "w")
-    while True:
-        waitForButton()
-        errCount = 3
-        GPIO.output(LED_PIN, GPIO.HIGH)
-        while errCount > 0:
-            data = pushup()
-            if isPushup(data):
-                arr += data
-                errCount = 3
-            else:
-                errCount -= 1
+    #f = open("data.csv", "w")
+    waitForButton()
+    errCount = 3
+    GPIO.output(LED_PIN, GPIO.HIGH)
+    while errCount > 0:
+        data = pushup()
+        if isPushup(data):
+            arr += data
+            errCount = 3
+        else:
+            errCount -= 1
 
-        GPIO.output(LED_PIN, GPIO.LOW)
-        detect_pushup.detect_pushup(arr)
-        arr = []
-        #print("Done pushups, Data:\n")
-        #for tup in arr:
-        #    log(tup, f)
+    GPIO.output(LED_PIN, GPIO.LOW)
+    detect_pushup.detect_pushup(arr)
+
+def main():
+    #wait for pub to know which workout to do
+    waitForButton() #for now...
+    analyzePushups()
 
 if __name__ == '__main__':
     main()
