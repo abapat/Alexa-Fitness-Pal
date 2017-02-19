@@ -3,7 +3,6 @@ import sys
 import scipy
 import sklearn
 
-
 cFlag_ = False
 def mClick(event, x, y, flags, param):
     global cFlag_
