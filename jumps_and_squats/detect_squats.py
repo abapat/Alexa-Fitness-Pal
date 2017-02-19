@@ -25,7 +25,7 @@ def get_movements():
     accumulator = [0,0]
     movement_dir = 0
 
-    t_end = time.time() + 10
+    t_end = time.time() + 5
 
     for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
 
@@ -102,4 +102,4 @@ def get_movements():
             break
     camera.close()
 #     cv2.destroyAllWindows()
-    return numSquats+10
+    return numSquats
