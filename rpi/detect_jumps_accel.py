@@ -33,5 +33,5 @@ def detect_jump(raw_data):
             numJumps += 1
         last_gyro_z = current_gyro_z
 
-    numJumps = numJumps*2
+    numJumps = numJumps*4
     print "You jumped", numJumps, "times"
