@@ -84,6 +84,7 @@ class MySubscribeCallback(SubscribeCallback):
             try:
                 sendData("squats", getRating(nSquats), nSquats)
                 pubnub.publish().channel("Channel-3ckelhgj1").message("done").async(my_publish_callback)
+                print "Data Sent"
             except:
                 print "Failed to send message"
                 pass
@@ -94,6 +95,7 @@ class MySubscribeCallback(SubscribeCallback):
             try:
                 sendData("jumping jacks", getRating(nJumps), nJumps)
                 pubnub.publish().channel("Channel-3ckelhgj1").message("done").async(my_publish_callback)
+                print "Data Sent"
             except:
                 print "Failed to send message"
                 pass
