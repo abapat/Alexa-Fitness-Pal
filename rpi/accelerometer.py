@@ -45,6 +45,7 @@ GPIO.setup(BLUE ,GPIO.OUT)
 DEVICE_ID = 1
 DEVICE_NAME = "IOT DEVICE 1" #hardcode
 SERVER = "https://hack-it-cewit.herokuapp.com"
+#SERVER = "http://172.30.0.220:3000"
 REGISTER_URL = "/api/iot/device"
 DATA_URL = "/api/iot/user"
 IP = "104.236.238.240"
@@ -103,18 +104,21 @@ class MySubscribeCallback(SubscribeCallback):
 
 def registerDevice():
     data = {'user_id': DEVICE_NAME, 'device_id': DEVICE_ID, 'is_active': 1}
-    headers = {"Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"}
+    #headers = {"Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"}
+    headers = {'Content-type': 'application/json'}
     r = requests.post(SERVER + REGISTER_URL, json=data, headers=headers)
     if r.status_code != 200:
         print("Error %d: %s" % (r.status_code, r.reason))
 
 def sendData(excercise, rating, improvements):
-    headers = {"Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"}
+    #headers = {"Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"}
+    headers = {'Content-type': 'application/json'}
     if improvements:
         payload = {'exercise': excercise, 'rating': rating, 'improvements': improvements, 'device_id': DEVICE_ID}
     else:
         payload = {'exercise': excercise, 'rating': rating, 'device_id': DEVICE_ID}
-    r = requests.post(SERVER + DATA_URL, json=payload,headers=headers )
+    print("Sending to %s" % (SERVER + DATA_URL))
+    r = requests.post(SERVER + DATA_URL, json=payload, headers=headers, allow_redirects=True)
     if r.status_code != 200:
         print("Error %d: %s" % (r.status_code, r.reason))
 
@@ -364,10 +368,18 @@ def getRating(res):
 def main():
     setupLed()
 
-    sendData("squats", 0.89, "5")
+    #res = sendData("squats", 0.89, "5")
+    #print res
+    #payload = {'exercise': 'squats', 'rating': 0.89, 'improvements': '5', 'device_id': 1}
+    #headers = {'Content-type': 'application/json'}
+    #url = "http://172.30.0.220:3000/api/iot/user"
+    #url = "https://hack-it-cewit.herokuapp.com/api/iot/user"
+    #response = requests.post(url, json=payload, headers=headers, allow_redirects=True)
+    #print response
 
-    #pubnub.add_listener(MySubscribeCallback())
-    #pubnub.subscribe().channels('Channel-3ckelhgj1').execute()
+
+    pubnub.add_listener(MySubscribeCallback())
+    pubnub.subscribe().channels('Channel-3ckelhgj1').execute()
 
 if __name__ == '__main__':
     main()
